@@ -1,0 +1,26 @@
+// project2-artifact-archiver/Jenkinsfile
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: ''
+            }
+        }
+        stage('Generate Report') {
+            steps {
+                dir('project2-artifact-archiver') {
+                    bat 'python app.py'
+                }
+            }
+        }
+        stage('Archive Report') {
+            steps {
+                dir('project2-artifact-archiver') {
+                    // Uploads and pins the file directly to the Jenkins UI build history panel
+                    archiveArtifacts artifacts: 'report.txt', fingerprint: true
+                }
+            }
+        }
+    }
+}
