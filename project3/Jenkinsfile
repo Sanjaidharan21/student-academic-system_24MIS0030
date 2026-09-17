@@ -1,0 +1,34 @@
+// project3-parallel-checks/Jenkinsfile
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: ''
+            }
+        }
+        stage('Parallel Academic Verification') {
+            parallel {
+                stage('Verify Portal UI') {
+                    steps {
+                        dir('project3-parallel-checks') {
+                            bat 'python frontend_check.py'
+                        }
+                    }
+                }
+                stage('Verify Database API') {
+                    steps {
+                        dir('project3-parallel-checks') {
+                            bat 'python backend_check.py'
+                        }
+                    }
+                }
+            }
+        }
+        stage('Summary') {
+            steps {
+                echo 'Build Complete: Core Student Management frameworks verified successfully.'
+            }
+        }
+    }
+}
