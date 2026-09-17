@@ -1,0 +1,28 @@
+// project1-parameterized/Jenkinsfile
+pipeline {
+    agent any
+    parameters {
+        // Creates a clean dropdown choice selection in the Jenkins UI
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'prod'], description: 'Select the target system deployment environment.')
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: ''
+            }
+        }
+        stage('Show Parameter') {
+            steps {
+                echo "Selected environment variable parameter: ${params.ENVIRONMENT}"
+            }
+        }
+        stage('Build for Environment') {
+            steps {
+                dir('project1-parameterized') {
+                    // Triggers the Python automation script passing the UI parameter value
+                    bat "python app.py ${params.ENVIRONMENT}" 
+                }
+            }
+        }
+    }
+}
